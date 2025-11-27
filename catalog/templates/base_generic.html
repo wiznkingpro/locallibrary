@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Загрузка статики ОДИН раз -->
+    {% load static %}
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- Ваш CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    {% block title %}<title>Local Library</title>{% endblock %}
+</head>
+
+<body>
+    <div class="container-fluid">
+    
+        <div class="row">
+            <!-- Боковая панель -->
+            <div class="col-sm-2">
+                {% block sidebar %}
+                <ul class="sidebar-nav">
+                    <li><a href="{% url 'index' %}">Главная</a></li>
+                    <li><a href="{% url 'books' %}">Все книги</a></li>
+                    <li><a href="{% url 'authors' %}">Все авторы</a></li>
+                    <ul class="sidebar-nav">
+   {% if user.is_authenticated %}
+   <li>User: {{ user.get_username }}</li>
+   <li><a href="{% url 'my-borrowed' %}">My Borrowed</a></li>
+    <form id="logout-form" method="post" action="{% url 'logout'%}?next={{request.path}}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link">Logout</button>
+                        </form>
+   {% else %}
+   <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
+   {% endif %}
+ </ul>
+                </ul>
+                {% endblock %}
+            </div>
+
+            <!-- Основной контент -->
+            <div class="col-sm-10">
+                {% block content %}{% endblock %}
+                {% block pagination %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
